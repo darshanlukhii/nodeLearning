@@ -1,3 +1,4 @@
+const fs = require("fs");
 const http = require("http");
 const url = require("url");
 
@@ -7,18 +8,20 @@ const url = require("url");
 //     res.end('hello this is the your end')
 // })
 
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+
 const server = http.createServer((req, res) => {
   const pathName = req?.url;
-  if (pathName == "/" || pathName == "/jini") {
-    res.writeHead(200,'Success',{
-        "my-own-header": "jini-success",    
+  if (pathName == "/" || pathName == "/product_data") {
+    res.writeHead(200, "Success", {
+      "my-own-header": "jini-success",
     });
-    res.end("Hello,How are you Shreya!!");
+    res.end(data);
   } else {
     res.writeHead(404, {
       "my-own-header": "Hello-jinii",
     });
-    res.end("Page not found");  
+    res.end("Page not found");
   }
 });
 
