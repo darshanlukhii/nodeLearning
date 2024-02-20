@@ -12,7 +12,7 @@ const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 
 const server = http.createServer((req, res) => {
   const pathName = req?.url;
-  if (pathName == "/" || pathName == "/product_data") {
+  if (pathName == "/product_data") {
     res.writeHead(200, "Success", {
       "my-own-header": "jini-success",
     });
