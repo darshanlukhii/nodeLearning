@@ -7,4 +7,5 @@ export const UPDATE_QUANTITY = 'UPDATE_QUANTITY';
 // api endpoints
 export const apiEndPoints = {
   product_data: 'product_data',
+  getAllTours: 'api/v1/tours/',
 };

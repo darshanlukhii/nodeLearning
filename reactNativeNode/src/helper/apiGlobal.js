@@ -6,7 +6,8 @@ export const makeAPIRequest = ({method, url, data, params}) =>
       //   'Content-Type': 'application/json',
       //   Accept: 'application/json',
     };
-    const base_url = 'http://192.168.29.26:8000/';
+    const base_url = 'http://192.168.29.26:3000/';
+    // const base_url = 'http://192.168.29.26:8000/';
     const option = {
       method,
       url: base_url + url,

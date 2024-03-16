@@ -21,6 +21,20 @@ export const getProductData = request => async dispatch => {
     });
 };
 
+export const get_product_data = request => async dispatch => {
+  return makeAPIRequest({
+    method: 'GET',
+    url: apiEndPoints.getAllTours,
+  })
+    .then(response => {
+      if (request.onSuccess) request.onSuccess(response?.data);
+      // dispatch({type: GET_PRODUCT_DATA, payload: response?.data});
+    })
+    .catch(error => {
+      if (request.onFail) request.onFail(error);
+    });
+};
+
 export const addToCart = product => ({
   type: ADD_TO_CART,
   payload: product,
