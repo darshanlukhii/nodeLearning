@@ -5,7 +5,6 @@ import {get_product_data} from '../Redux/Actions/productAction';
 import {hp, wp} from '../utils/constant';
 
 const HomeScreen = () => {
-  const dispatch = useDispatch();
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -15,11 +14,11 @@ const HomeScreen = () => {
   const get_data = async () => {
     let request = {
       onSuccess: res => {
-        setData(res?.data?.tours || []);
+        setData(res?.tours || []);
       },
       onFail: () => {},
     };
-    dispatch(get_product_data(request));
+    get_product_data(request);
   };
 
   const renderTourItem = ({item, index}) => {

@@ -7,7 +7,7 @@ import {
 } from '../../helper/actionTypes';
 import {makeAPIRequest} from '../../helper/apiGlobal';
 
-export const getProductData = request => async dispatch => {
+export const getProductData = async request => {
   return makeAPIRequest({
     method: 'GET',
     url: apiEndPoints.product_data,
@@ -21,7 +21,7 @@ export const getProductData = request => async dispatch => {
     });
 };
 
-export const get_product_data = request => async dispatch => {
+export const get_product_data = async request => {
   return makeAPIRequest({
     method: 'GET',
     url: apiEndPoints.getAllTours,

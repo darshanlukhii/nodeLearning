@@ -25,7 +25,7 @@ const HomeScreen = ({navigation}) => {
       onSuccess: res => {},
       onFail: () => {},
     };
-    dispatch(getProductData(request));
+    getProductData(request);
   };
 
   const filteredProducts = data?.products?.filter(product =>
