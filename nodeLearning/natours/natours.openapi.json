@@ -1,0 +1,428 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "natours",
+    "description": "Express API (`app.js` + `routes/`). Tours: `tours-simple.json`. Users: `users.json` (bcrypt; **password never returned**). Reviews: `reviews.json` with optional `?tour=` / `?user=` filters and nested `GET /tours/{tourId}/reviews`.\n\n**Apidog / Postman:** Import as **OpenAPI**, or use `natours.postman_collection.json` for Postman format.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Default (`server.js`)"
+    }
+  ],
+  "tags": [
+    { "name": "Meta" },
+    { "name": "Tours" },
+    { "name": "Users" },
+    { "name": "Reviews" },
+    { "name": "Other" }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": ["Meta"],
+        "summary": "Health check",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "API is running",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tours": {
+      "get": {
+        "tags": ["Tours"],
+        "summary": "Get all tours",
+        "operationId": "getAllTours",
+        "responses": {
+          "200": {
+            "description": "List of tours",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tours"],
+        "summary": "Create new tour",
+        "operationId": "createTour",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "maxGroupSize", "difficulty", "ratingsAverage"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "maxGroupSize": { "type": "integer" },
+                  "difficulty": { "type": "string" },
+                  "ratingsAverage": { "type": "number" }
+                }
+              },
+              "example": {
+                "name": "Darshan Lukhi",
+                "maxGroupSize": 15,
+                "difficulty": "easy",
+                "ratingsAverage": 3.5
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tours/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "example": "2"
+        }
+      ],
+      "get": {
+        "tags": ["Tours"],
+        "summary": "Get tour by id",
+        "operationId": "getTour",
+        "responses": {
+          "200": {
+            "description": "Single tour",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid id"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Tours"],
+        "summary": "Update tour",
+        "operationId": "updateTour",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "maxGroupSize": { "type": "integer" },
+                  "difficulty": { "type": "string" },
+                  "ratingsAverage": { "type": "number" }
+                }
+              },
+              "example": {
+                "maxGroupSize": 15,
+                "difficulty": "easy",
+                "ratingsAverage": 3.5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated tour (persisted to file)",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid id"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tours"],
+        "summary": "Delete tour",
+        "operationId": "deleteTour",
+        "responses": {
+          "204": {
+            "description": "Deleted (empty body)"
+          },
+          "404": {
+            "description": "Invalid id"
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "Users without password field"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create user",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "minLength": 8 },
+                  "role": { "type": "string" },
+                  "active": { "type": "boolean" },
+                  "photo": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created (no password in body)" },
+          "400": { "description": "Validation error" },
+          "409": { "description": "Email already registered" }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "example": "5c8a1d5b0190b214360dc057"
+        }
+      ],
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user",
+        "operationId": "getUser",
+        "responses": {
+          "200": { "description": "User without password" },
+          "404": { "description": "Invalid id" }
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "operationId": "updateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string", "minLength": 8 },
+                  "role": { "type": "string" },
+                  "active": { "type": "boolean" },
+                  "photo": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated user" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Invalid id" },
+          "409": { "description": "Email conflict" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "operationId": "deleteUser",
+        "responses": {
+          "204": { "description": "Deleted" },
+          "404": { "description": "Invalid id" }
+        }
+      }
+    },
+    "/api/v1/tours/{tourId}/reviews": {
+      "parameters": [
+        {
+          "name": "tourId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "example": "5c88fa8cf4afda39709c2955",
+          "description": "Tour id (same string as in `reviews.tour`, often from full `tours.json` dataset)"
+        }
+      ],
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "List reviews for a tour (nested under tours)",
+        "operationId": "getReviewsByTour",
+        "responses": {
+          "200": {
+            "description": "Reviews for this tour",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reviews": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "List reviews (optional filters)",
+        "operationId": "getAllReviews",
+        "parameters": [
+          {
+            "name": "tour",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by tour id"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by user id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered or all reviews"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Create review",
+        "operationId": "createReview",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["review", "rating", "user", "tour"],
+                "properties": {
+                  "review": { "type": "string", "description": "Review text (JSON field name is `review`)" },
+                  "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                  "user": { "type": "string", "description": "Existing user `_id`" },
+                  "tour": { "type": "string", "description": "Tour id string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Validation or unknown user" },
+          "500": { "description": "Persist failed" }
+        }
+      }
+    },
+    "/api/v1/reviews/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "example": "5c8a34ed14eb5c17645c9108"
+        }
+      ],
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get one review",
+        "operationId": "getReview",
+        "responses": {
+          "200": { "description": "Review document" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Reviews"],
+        "summary": "Update review",
+        "operationId": "updateReview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "review": { "type": "string" },
+                  "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                  "user": { "type": "string" },
+                  "tour": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated" },
+          "400": { "description": "Validation" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Reviews"],
+        "summary": "Delete review",
+        "operationId": "deleteReview",
+        "responses": {
+          "204": { "description": "No content" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/api/api/ecommerce-platform": {
+      "get": {
+        "tags": ["Other"],
+        "summary": "External sample (not this natours app)",
+        "description": "From your original spec / cURL against another service on port 8000. Not implemented by `nodeLearning/natours`.",
+        "servers": [
+          {
+            "url": "http://localhost:8000"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Depends on external API"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

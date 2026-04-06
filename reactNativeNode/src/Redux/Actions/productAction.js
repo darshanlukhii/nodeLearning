@@ -7,7 +7,7 @@ import {
 } from '../../helper/actionTypes';
 import {makeAPIRequest} from '../../helper/apiGlobal';
 
-export const getProductData = request => async dispatch => {
+export const getProductData = async request => {
   return makeAPIRequest({
     method: 'GET',
     url: apiEndPoints.product_data,
@@ -15,6 +15,20 @@ export const getProductData = request => async dispatch => {
     .then(response => {
       if (request.onSuccess) request.onSuccess(response?.data);
       dispatch({type: GET_PRODUCT_DATA, payload: response?.data});
+    })
+    .catch(error => {
+      if (request.onFail) request.onFail(error);
+    });
+};
+
+export const get_product_data = async request => {
+  return makeAPIRequest({
+    method: 'GET',
+    url: apiEndPoints.getAllTours,
+  })
+    .then(response => {
+      if (request.onSuccess) request.onSuccess(response?.data);
+      // dispatch({type: GET_PRODUCT_DATA, payload: response?.data});
     })
     .catch(error => {
       if (request.onFail) request.onFail(error);
