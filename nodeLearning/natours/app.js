@@ -44,6 +44,7 @@ const morgan = require("morgan");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
 
 // Middleware
 const app = express();
@@ -57,8 +58,24 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.get("/api/v1/health", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    requestedAt: req.requestTime,
+    message: "Natours API is running",
+  });
+});
+
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users/", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
-//Start Server
+app.all("*", (req, res) => {
+  res.status(404).json({
+    status: "fail",
+    requestedAt: req.requestTime,
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
+
 module.exports = app;
