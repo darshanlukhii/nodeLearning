@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "natours",
-    "description": "Express API (`app.js` + `routes/`). Tours: `tours-simple.json`. Users: `users.json` (bcrypt; **password never returned**). Reviews: `reviews.json` with optional `?tour=` / `?user=` filters and nested `GET /tours/{tourId}/reviews`.\n\n**Apidog / Postman:** Import as **OpenAPI**, or use `natours.postman_collection.json` for Postman format.",
+    "description": "Express API (`app.js` + `routes/`). **Simple tours:** `tours-simple.json` under `/api/v1/tours`. **Catalog tours (full Mongo-shaped docs):** `tours.json` under `/api/v1/catalog-tours` — same `_id` values reviews use. Users: `users.json`. Reviews: `reviews.json`.\n\n**Apidog / Postman:** Import as **OpenAPI**, or use `natours.postman_collection.json` for Postman format.",
     "version": "1.0.0"
   },
   "servers": [
@@ -16,6 +16,7 @@
     { "name": "Tours" },
     { "name": "Users" },
     { "name": "Reviews" },
+    { "name": "Catalog tours" },
     { "name": "Other" }
   ],
   "paths": {
@@ -398,6 +399,122 @@
         "tags": ["Reviews"],
         "summary": "Delete review",
         "operationId": "deleteReview",
+        "responses": {
+          "204": { "description": "No content" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/api/v1/catalog-tours": {
+      "get": {
+        "tags": ["Catalog tours"],
+        "summary": "List full catalog tours (rich documents)",
+        "operationId": "getAllCatalogTours",
+        "parameters": [
+          {
+            "name": "difficulty",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["easy", "medium", "difficult"] }
+          },
+          { "name": "minPrice", "in": "query", "schema": { "type": "number" } },
+          { "name": "maxPrice", "in": "query", "schema": { "type": "number" } },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "e.g. price, -price, name, duration, ratingsAverage",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "`data.catalogTours` from `tours.json`" }
+        }
+      },
+      "post": {
+        "tags": ["Catalog tours"],
+        "summary": "Create catalog tour",
+        "operationId": "createCatalogTour",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "duration",
+                  "maxGroupSize",
+                  "difficulty",
+                  "price",
+                  "summary",
+                  "description",
+                  "imageCover"
+                ],
+                "properties": {
+                  "name": { "type": "string" },
+                  "duration": { "type": "number" },
+                  "maxGroupSize": { "type": "integer" },
+                  "difficulty": { "type": "string" },
+                  "price": { "type": "number" },
+                  "summary": { "type": "string" },
+                  "description": { "type": "string" },
+                  "imageCover": { "type": "string" },
+                  "startLocation": { "type": "object" },
+                  "images": { "type": "array", "items": {} },
+                  "startDates": { "type": "array", "items": {} },
+                  "guides": { "type": "array", "items": { "type": "string" } },
+                  "locations": { "type": "array", "items": {} }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Validation" },
+          "500": { "description": "Persist failed" }
+        }
+      }
+    },
+    "/api/v1/catalog-tours/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "example": "5c88fa8cf4afda39709c2955"
+        }
+      ],
+      "get": {
+        "tags": ["Catalog tours"],
+        "summary": "Get one catalog tour",
+        "operationId": "getCatalogTour",
+        "responses": {
+          "200": { "description": "Full tour document" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Catalog tours"],
+        "summary": "Update catalog tour",
+        "operationId": "updateCatalogTour",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Persist failed" }
+        }
+      },
+      "delete": {
+        "tags": ["Catalog tours"],
+        "summary": "Delete catalog tour",
+        "operationId": "deleteCatalogTour",
         "responses": {
           "204": { "description": "No content" },
           "404": { "description": "Not found" }

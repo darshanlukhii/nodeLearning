@@ -208,6 +208,68 @@
       ]
     },
     {
+      "name": "Catalog tours (full tours.json)",
+      "item": [
+        {
+          "name": "List catalog tours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/catalog-tours"
+          }
+        },
+        {
+          "name": "List filtered — difficulty & price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/catalog-tours?difficulty=easy&maxPrice=800&sort=price"
+          }
+        },
+        {
+          "name": "Get one catalog tour",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/catalog-tours/5c88fa8cf4afda39709c2955"
+          }
+        },
+        {
+          "name": "Create catalog tour",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Catalog Sample\",\n  \"duration\": 4,\n  \"maxGroupSize\": 10,\n  \"difficulty\": \"easy\",\n  \"price\": 599,\n  \"summary\": \"Short summary line.\",\n  \"description\": \"Longer description for the tour.\",\n  \"imageCover\": \"tour-sample-cover.jpg\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/catalog-tours"
+          }
+        },
+        {
+          "name": "Update catalog tour (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 649,\n  \"summary\": \"Updated summary\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/catalog-tours/5c88fa8cf4afda39709c2955",
+            "description": "Prefer testing PATCH on an id you created via POST."
+          }
+        },
+        {
+          "name": "Delete catalog tour",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/catalog-tours/REPLACE_CATALOG_TOUR_ID"
+          }
+        }
+      ]
+    },
+    {
       "name": "Other (external)",
       "item": [
         {
